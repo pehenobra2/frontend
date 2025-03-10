@@ -1,21 +1,14 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
+import { useRecoilState } from "recoil";
+import { listaDeProdutosState, paginaAtualState, filtrosState, searchQueryState } from "../state/atom";
 import CardProduto from "../components/catalogo/cardProduto";
 import FiltroContainer from "../components/catalogo/Filtro";
+import {useListaProdutos}  from "../state/hooks/useListaProdutos";
+import { IProduto } from "../interfaces/IProduto";
 
-// Definição dos grupos de filtros
-const Group = {
-  MARCA: "marca",
-  CATEGORIA: "categoria",
-};
-
-/**
- * @typedef {Object} Filter
- * @property {string} name
- * @property {string} group
- * @property {(produto: any) => boolean} fnc
- */
+type FiltersState = { [key: string]: Set<string> };
 
 const CatalogoContainer = styled.div`
   display: flex;
@@ -72,56 +65,46 @@ const BotaoPaginacao = styled.button`
 
 function Catalogo() {
   const produtosPorPagina = 6;
-  const [produtos, setProdutos] = useState([]);
-  const [produtosFiltrados, setProdutosFiltrados] = useState([]);
-  const [paginaAtual, setPaginaAtual] = useState(1);
-  const [filters, setFilters] = useState([]);
+  const [, setProdutos] = useRecoilState(listaDeProdutosState);
+  const [paginaAtual, setPaginaAtual] = useRecoilState(paginaAtualState);
+  const [, setFiltros] = useRecoilState<FiltersState>(filtrosState);
+  const [, setSearchQuery] = useRecoilState(searchQueryState);
+  const produtosFiltrados = useListaProdutos();
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/catalogo")
+      .get<IProduto[]>("http://localhost:8080/catalogo")
       .then((response) => {
         setProdutos(response.data);
-        setProdutosFiltrados(response.data);
+        console.log("Todos os produtos:", response.data);
       })
       .catch((error) => console.error("Erro ao buscar produtos:", error));
-  }, []);
+  }, [setProdutos]);
 
-  function filterExists(name, group) {
-    return filters.some((f) => f.name === name && f.group === group);
-  }
+  const toggleFilter = (group: string, value: string) => {
+    setFiltros((prev) => {
+      const updated = { ...prev };
+  
+      if (!updated[group]) {
+        updated[group] = new Set();
+      }
+  
+      const newSet = new Set(updated[group]);
+  
+      if (newSet.has(value)) {
+        newSet.delete(value);
+      } else {
+        newSet.add(value);
+      }
+  
+      return { ...updated, [group]: newSet };
+    });
+  };
+  
+  
 
-  function addFilter(name, group, fnc) {
-    setFilters((currentFilters) => [...currentFilters, { name, group, fnc }]);
-  }
-
-  function removeFilter(name, group) {
-    setFilters((currentFilters) =>
-      currentFilters.filter((f) => !(f.name === name && f.group === group))
-    );
-  }
-
-  function toggleFilter(name, group, fnc) {
-    filterExists(name, group) ? removeFilter(name, group) : addFilter(name, group, fnc);
-  }
-
-  useEffect(() => {
-    const filteredProducts = applyFilters(produtos, filters);
-    setProdutosFiltrados(filteredProducts);
-    setPaginaAtual(1);
-  }, [filters, produtos]);
-
-  function applyFilters(produtos, filters) {
-    return produtos.filter((produto) => filters.every((filter) => filter.fnc(produto)));
-  }
-
-  useEffect(() => {
-    const filteredProducts = applyFilters(produtos, filters);
-    console.log('Produtos Filtrados:', filteredProducts);  // Verifique aqui
-    setProdutosFiltrados(filteredProducts);
-    setPaginaAtual(1);
-}, [filters, produtos]);
-
+  
+  
 
   const indiceInicial = (paginaAtual - 1) * produtosPorPagina;
   const produtosExibidos = produtosFiltrados.slice(indiceInicial, indiceInicial + produtosPorPagina);
@@ -130,20 +113,18 @@ function Catalogo() {
   return (
     <CatalogoContainer>
       <CatalogoBox>
-        <FiltroContainer toggleFilter={toggleFilter} filterExists={filterExists} />
+        <FiltroContainer toggleFilter={toggleFilter} setSearchQuery={setSearchQuery} />
         <div>
           <ListaProdutos>
             {produtosExibidos.map((produto) => (
-              <CardProduto key={produto.id} produto={produto} />
+              <CardProduto key={produto.id} produto={{ ...produto, imagemUrl: produto.imagem }} />
             ))}
           </ListaProdutos>
           <Paginacao>
             <BotaoPaginacao onClick={() => setPaginaAtual(paginaAtual - 1)} disabled={paginaAtual === 1}>
               Anterior
             </BotaoPaginacao>
-            <span>
-              Página {paginaAtual} de {totalPaginas}
-            </span>
+            <span>Página {paginaAtual} de {totalPaginas}</span>
             <BotaoPaginacao onClick={() => setPaginaAtual(paginaAtual + 1)} disabled={paginaAtual === totalPaginas}>
               Próxima
             </BotaoPaginacao>

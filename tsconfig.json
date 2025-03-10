@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    /* 🎯 Configuração do JavaScript alvo e módulo */
+    "target": "ESNext", 
+    "module": "ESNext",
+    "moduleResolution": "node",
+
+    /* 🖼️ Configuração JSX para React */
+    "jsx": "react-jsx",
+
+    /* 🚀 Compatibilidade com importações modernas */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* 📌 Diretórios do projeto */
+    "rootDir": "src",
+    "outDir": "dist",
+
+    /* 🔍 Regras de tipagem */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    /* 🛑 Tratamento de erros */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* ⚡ Otimizações */
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

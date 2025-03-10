@@ -1,5 +1,15 @@
 import styled from "styled-components";
 
+interface Produto {
+    id: number;
+    nome: string;
+    imagemUrl: string;
+}
+
+interface CardProdutoProps {
+    produto: Produto;
+}
+
 const CardProdutoList = styled.div`
     padding: 10px;
     box-sizing: border-box;
@@ -34,13 +44,13 @@ const ImageCardProduto = styled.img`
     max-height: 330px;
 `;
 
-function CardProduto({ produto }) {
+const CardProduto: React.FC<CardProdutoProps> = ({ produto }) => {
     return (
         <CardProdutoList>
             <TituloCardProduto>{produto.nome}</TituloCardProduto>
             <ImageCardProduto src={produto.imagemUrl} />
         </CardProdutoList>
     );
-}
+};
 
 export default CardProduto;
