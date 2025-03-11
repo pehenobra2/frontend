@@ -5,6 +5,7 @@ import Catalogo from "./pages/catalogo";
 import NotFound from "./pages/notFound";
 import "./App.css";
 import { RecoilRoot } from "recoil"
+import Produto from "./pages/produto";
 
 const App: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="/catalogo" element={<Catalogo />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/catalogo/:id" element={<Produto/>}/>
             </Routes>
           </div>
         </div>

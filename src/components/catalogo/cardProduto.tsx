@@ -1,13 +1,9 @@
 import styled from "styled-components";
-
-interface Produto {
-    id: number;
-    nome: string;
-    imagemUrl: string;
-}
+import {IProdutoCard} from "../../interfaces/IProdutoCard";
+import { useNavigate } from "react-router-dom";
 
 interface CardProdutoProps {
-    produto: Produto;
+    produto: IProdutoCard;
 }
 
 const CardProdutoList = styled.div`
@@ -45,8 +41,16 @@ const ImageCardProduto = styled.img`
 `;
 
 const CardProduto: React.FC<CardProdutoProps> = ({ produto }) => {
+
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate(`/catalogo/${produto.id}`);
+
+    }
+
     return (
-        <CardProdutoList>
+        <CardProdutoList onClick={handleClick}>
             <TituloCardProduto>{produto.nome}</TituloCardProduto>
             <ImageCardProduto src={produto.imagemUrl} />
         </CardProdutoList>

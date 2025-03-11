@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     /* 🎯 Configuração do JavaScript alvo e módulo */
-    "target": "ESNext", 
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
 
@@ -34,7 +34,14 @@
     "noFallthroughCasesInSwitch": true,
 
     /* ⚡ Otimizações */
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    /* 🔢 Tipos explícitos */
+    "types": [
+      "node",
+      "react",
+      "react-dom"
+    ]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
